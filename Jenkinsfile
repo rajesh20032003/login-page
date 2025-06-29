@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'login-page'
         CONTAINER_NAME = 'login-page'
-        HOST_PORT = '8080'
+        HOST_PORT = '8088'
         CONTAINER_PORT = '8080'
     }
 
