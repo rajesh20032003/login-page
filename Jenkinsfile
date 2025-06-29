@@ -1,24 +1,31 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'login-page'
+        CONTAINER_NAME = 'login-page'
+        HOST_PORT = '8080'
+        CONTAINER_PORT = '8080'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git 'git@github.com:rajesh20032003/login-page.git'
+                git url: 'git@github.com:rajesh20032003/login-page.git', branch: 'master'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t login-page -f Dockerfile.dev .'
+                sh 'docker build -t $IMAGE_NAME -f Dockerfile.dev .'
             }
         }
 
         stage('Stop & Remove Existing Container') {
             steps {
                 sh '''
-                    docker stop login-page || true
-                    docker rm login-page || true
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
                 '''
             }
         }
@@ -26,13 +33,15 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker run -d --name login-page \
-                      -p 8080:8080 \
-                      -v "$PWD":/app \
-                      login-page
+                    docker run -d \
+                        --name $CONTAINER_NAME \
+                        -p $HOST_PORT:$CONTAINER_PORT \
+                        -v "$PWD":/app \
+                        $IMAGE_NAME
                 '''
             }
         }
     }
 }
+
 
